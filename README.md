@@ -7,6 +7,6 @@ G08
 
 - Christopher Adrian
 - Ethan Chen Ee Shuen
-- Golling Paul David
+- Paul David Christopher Golling
 - John Russell Himawan
 - Nguyen Viet Anh
