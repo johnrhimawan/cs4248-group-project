@@ -5,13 +5,14 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from trl import SFTTrainer
 import bitsandbytes as bnb
 from huggingface_hub import login
+import pandas as pd
 import os
 
 login(token=os.environ["HUGGINGFACE_TOKEN"])
 
 # No wandb evaluation since I was lazy to setup, perhaps next time
 
-INSTRUCTION_PROMPT = "Correct the grammatical errors in the following sentence:"
+INSTRUCTION_PROMPT = "Correct the grammatical errors in the following sentence."
 BASE_MODEL_ID="meta-llama/Meta-Llama-3.1-8B"
 OUTPUT_DIR = "llama-3.1-fine-tuned-gec"
 MODEL_DIR = "Llama-3.1-8B-Instruct-Grammatical-Error-Correction"
@@ -19,15 +20,14 @@ TRAIN_FILES = ["A.train.gold.bea19", "B.train.gold.bea19", "C.train.gold.bea19",
 DEVELOPMENT_FILES = ["ABCN.dev.gold.bea19"]
 
 def prepare_dataset(files, dataset_type):
-    src_sentences = []
-    tgt_sentences = []
+    sentences = []
     for file in files:
         src_file = f"data/{dataset_type}/{file}.src"
         tgt_file = f"data/{dataset_type}/{file}.tgt"
         with open(src_file, "r") as src_f, open(tgt_file, "r") as tgt_f:
-            src_sentences.extend(src_f.readlines())
-            tgt_sentences.extend(tgt_f.readlines())
-    dataset = Dataset.from_dict({"text": src_sentences, "label": tgt_sentences})
+            for src_line, tgt_line in zip(src_f, tgt_f):
+                sentences.append(generate_prompt({"text": src_line.strip(), "label": tgt_line.strip()}))
+    dataset = Dataset.from_dict({"text": sentences})
     return dataset
 
 def find_all_linear_names(model):
@@ -41,10 +41,10 @@ def find_all_linear_names(model):
         lora_module_names.remove('lm_head')
     return list(lora_module_names)
 
-def generate_prompt(text, label):
+def generate_prompt(data_point):
     return f"""{INSTRUCTION_PROMPT}
-    Original Sentence: {text}
-    Corrected Sentence: {label}""".strip()
+    Original Sentence: {data_point['text']}
+    Corrected Sentence: {data_point['label']}""".strip()
 
 def generate_test_prompt(text):
     return f"""{INSTRUCTION_PROMPT}
@@ -61,6 +61,17 @@ def predict(test, model, tokenizer):
     
     corrected_sentences = tokenizer.batch_decode(outputs, skip_special_tokens=True)
     return corrected_sentences
+
+train_data = prepare_dataset(TRAIN_FILES, "train")
+eval_data = prepare_dataset(DEVELOPMENT_FILES, "development")
+
+# print(train_data['text'])
+
+print(f"Training dataset size: {len(train_data)}")
+# print(f"Training dataset columns: {train_data.column_names}")
+
+# print(f"Evaluation dataset size: {len(eval_data)}")
+# print(f"Evaluation dataset columns: {eval_data.column_names}")
 
 bnb_config = BitsAndBytesConfig(
     load_in_4bit=True,
@@ -83,8 +94,6 @@ model.config.pretraining_tp = 1
 tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_ID)
 tokenizer.pad_token_id = tokenizer.eos_token_id
 
-train_data = prepare_dataset(TRAIN_FILES, "train")
-eval_data = prepare_dataset(DEVELOPMENT_FILES, "development")
 modules = find_all_linear_names(model)
 print(f"The target modules are: {' '.join(modules)}")
 
@@ -100,11 +109,11 @@ peft_config = LoraConfig(
 training_arguments = TrainingArguments(
     output_dir=OUTPUT_DIR,                    # directory to save and repository id
     num_train_epochs=1,                       # number of training epochs
-    per_device_train_batch_size=1,            # batch size per device during training
-    gradient_accumulation_steps=8,            # number of steps before performing a backward/update pass
+    per_device_train_batch_size=2,            # batch size per device during training
+    gradient_accumulation_steps=4,            # number of steps before performing a backward/update pass
     gradient_checkpointing=True,              # use gradient checkpointing to save memory
     optim="paged_adamw_32bit",
-    logging_steps=1,                         
+    logging_steps=100,                         
     learning_rate=2e-4,                       # learning rate, based on QLoRA paper
     weight_decay=0.001,
     fp16=True,
@@ -116,7 +125,7 @@ training_arguments = TrainingArguments(
     lr_scheduler_type="cosine",               # use cosine learning rate scheduler
     # report_to="wandb",                  # report metrics to w&b
     eval_strategy="steps",              # save checkpoint every epoch
-    eval_steps = 0.2
+    eval_steps = 1000
 )
 
 trainer = SFTTrainer(
@@ -136,6 +145,8 @@ trainer = SFTTrainer(
 )
 
 trainer.train()
+
+# print(model)
 
 model.config.use_cache = True
 
