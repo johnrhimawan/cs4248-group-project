@@ -18,12 +18,12 @@ MODEL_DIR = "Llama-3.1-8B-Instruct-Grammatical-Error-Correction"
 TRAIN_FILES = ["A.train.gold.bea19", "B.train.gold.bea19", "C.train.gold.bea19", "fce.dev.gold.bea19", "fce.train.gold.bea19", "lang8.train.auto.bea19", "nucle.train.gold.bea19"]
 DEVELOPMENT_FILES = ["ABCN.dev.gold.bea19"]
 
-def prepare_dataset(files):
+def prepare_dataset(files, dataset_type):
     src_sentences = []
     tgt_sentences = []
     for file in files:
-        src_file = f"/data/train/{file}.src"
-        tgt_file = f"/data/train/{file}.tgt"
+        src_file = f"data/{dataset_type}/{file}.src"
+        tgt_file = f"data/{dataset_type}/{file}.tgt"
         with open(src_file, "r") as src_f, open(tgt_file, "r") as tgt_f:
             src_sentences.extend(src_f.readlines())
             tgt_sentences.extend(tgt_f.readlines())
@@ -83,8 +83,8 @@ model.config.pretraining_tp = 1
 tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_ID)
 tokenizer.pad_token_id = tokenizer.eos_token_id
 
-train_data = prepare_dataset(TRAIN_FILES)
-eval_data = prepare_dataset(DEVELOPMENT_FILES)
+train_data = prepare_dataset(TRAIN_FILES, "train")
+eval_data = prepare_dataset(DEVELOPMENT_FILES, "development")
 modules = find_all_linear_names(model)
 print(f"The target modules are: {' '.join(modules)}")
 
