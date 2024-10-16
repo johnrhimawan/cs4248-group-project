@@ -26,9 +26,14 @@ We need to use Slurm to submit jobs to the compute cluster to use the GPUs. The 
 
 #SBATCH --job-name=gpujob
 #SBATCH --gpus=1
+#SBATCH --time=5:00:00
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=<your-email>
 
 srun somegpuprogram.py
 ```
+
+The above script will request 1 GPU for 5 hours and send you an email when the job starts, ends, or fails. You can edit the script with the functions that suit your needs.
 
 2. Submit a batch job, e.g. `sbatch somejob.sh`
 
