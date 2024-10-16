@@ -1,3 +1,4 @@
 .env
 .DS_Store
 /data/train/lang8.train.auto.bea19.m2
+.venv
