@@ -13,6 +13,13 @@ G08
 
 ---
 
+## Quick Links
+
+- (Project Report)[https://www.overleaf.com/project/670e55bdb093a9c5de4af20e]
+- (Fine-tuned Llama 3.1 8B model)[https://huggingface.co/johnrhimawan/Llama-3.1-8B-Instruct-Grammatical-Error-Correction]
+
+---
+
 ## How to Use SoC Compute Cluster
 
 SoC has published documentation on how to [use the compute cluster](https://dochub.comp.nus.edu.sg/cf/services/compute-cluster) and [a quickstart for using Slurm](https://dochub.comp.nus.edu.sg/cf/guides/compute-cluster/slurm-quick)
