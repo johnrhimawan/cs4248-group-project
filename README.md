@@ -15,8 +15,8 @@ G08
 
 ## Quick Links
 
-- (Project Report)[https://www.overleaf.com/project/670e55bdb093a9c5de4af20e]
-- (Fine-tuned Llama 3.1 8B model)[https://huggingface.co/johnrhimawan/Llama-3.1-8B-Instruct-Grammatical-Error-Correction]
+- [Project Report](https://www.overleaf.com/project/670e55bdb093a9c5de4af20e)
+- [Fine-tuned Llama 3.1 8B model](https://huggingface.co/johnrhimawan/Llama-3.1-8B-Instruct-Grammatical-Error-Correction)
 
 ---
 
