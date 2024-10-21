@@ -29,7 +29,7 @@ We need to use Slurm to submit jobs to the compute cluster to use the GPUs. The 
 1. Create a batch script, e.g. `somejob.sh`:
 
 ```bash
-#/bin/bash
+#!/bin/bash
 
 #SBATCH --job-name=gpujob
 #SBATCH --gpus=1
