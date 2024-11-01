@@ -16,6 +16,7 @@ torchaudio = "*"
 transformers = "*"
 huggingface-hub = "*"
 accelerate = "*"
+spacy = "*"
 
 [dev-packages]
 
