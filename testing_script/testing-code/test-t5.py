@@ -42,7 +42,7 @@ def correct_sentences(model, tokenizer, sentences):
             outputs = model.generate(inputs["input_ids"], max_new_tokens=128) 
         
         corrected_sentence = tokenizer.decode(outputs[0], skip_special_tokens=True)
-        corrected_sentece = ' '.join([w.text for w in nlp(corrected_sentence)])
+        corrected_sentence = ' '.join([w.text for w in nlp(corrected_sentence)])
         corrected_sentences.append(corrected_sentence)
 
         print(f"Corrected Sentence: {corrected_sentence}\n")
