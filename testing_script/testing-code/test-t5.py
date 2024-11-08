@@ -1,5 +1,6 @@
 import os
 import torch
+import spacy
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 MODEL_ID = "christopher-ml/flan-t5-xl-grammatical-error-correction"
@@ -29,6 +30,7 @@ def load_test_data(test_file):
 
 def correct_sentences(model, tokenizer, sentences):
     corrected_sentences = [] 
+    nlp = spacy.load('en_core_web_sm')
     for sentence in sentences:
         print(f"Original Sentence: {sentence}")
         
@@ -40,6 +42,7 @@ def correct_sentences(model, tokenizer, sentences):
             outputs = model.generate(inputs["input_ids"], max_new_tokens=128) 
         
         corrected_sentence = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        corrected_sentece = ' '.join([w.text for w in nlp(corrected_sentence)])
         corrected_sentences.append(corrected_sentence)
 
         print(f"Corrected Sentence: {corrected_sentence}\n")

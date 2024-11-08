@@ -1,4 +1,5 @@
 import torch
+import spacy
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 INSTRUCTION_PROMPT = "Correct the grammatical errors in the following sentence. Only provide the corrected sentence without any additional explanation or response."
@@ -34,6 +35,7 @@ def load_test_data(test_file):
 
 def correct_sentences(model, tokenizer, sentences):
     corrected_sentences = []
+    nlp = spacy.load('en_core_web_sm')
     for sentence in sentences:
         prompt = generate_test_prompt(sentence)
         
@@ -45,6 +47,7 @@ def correct_sentences(model, tokenizer, sentences):
             outputs = model.generate(inputs["input_ids"], attention_mask=inputs["attention_mask"], max_length=512)
 
         corrected_sentence = tokenizer.decode(outputs[0], skip_special_tokens=True)
+        corrected_sentece = ' '.join([w.text for w in nlp(corrected_sentence)])
         corrected_sentences.append(corrected_sentence.strip())
 
         print(f"\nOriginal Input: {sentence}")
