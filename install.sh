@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #SBATCH --job-name=install_packages
+#SBATCH --gres=gpu:a100-80:1
 #SBATCH --time=100:00:00
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=e0550468@u.nus.edu
