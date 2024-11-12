@@ -5,6 +5,7 @@ import spacy
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 MODEL_ID = "christopher-ml/flan-t5-xl-grammatical-error-correction"
+#MODEL_ID = "johnrhimawan/flan-t5-xxl-checkpoint-360000"
 
 # Paths for CoNLL-14 and BEA-19 test files
 TEST_FILE_CONLL14 = "../data/test/conll14st-test-data/alt/official-2014.combined-withalt.src"
