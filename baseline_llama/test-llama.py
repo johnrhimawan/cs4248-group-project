@@ -3,7 +3,7 @@ import spacy
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 INSTRUCTION_PROMPT = "Correct the grammatical errors in the following sentence. Only provide the corrected sentence without any additional explanation or response."
-MODEL_ID = "Llama-3.1-8B-Instruct-Grammatical-Error-Correction-2"
+MODEL_ID = "johnrhimawan/Llama-3.1-8B-Instruct-Grammatical-Error-Correction-2"
 TEST_FILE = "../data/test/ABCN.test.bea19.orig" 
 OUTPUT_FILE = "llama_corrected_bea.txt"  
 
