@@ -14,6 +14,14 @@
 
 Run `sbatch install.sh`
 
+## Evaluating Models
+
+See [testing_script](./testing_script/).
+
+## Ensembling with GRECO
+
+See [greco-ensemble](./greco-ensemble/).
+
 ## Appendix: How to Use SoC Compute Cluster
 
 SoC has published documentation on how to [use the compute cluster](https://dochub.comp.nus.edu.sg/cf/services/compute-cluster) and [a quickstart for using Slurm](https://dochub.comp.nus.edu.sg/cf/guides/compute-cluster/slurm-quick).
