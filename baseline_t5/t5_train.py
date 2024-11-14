@@ -10,18 +10,50 @@ import numpy as np
 from datasets import Dataset
 from transformers import DataCollatorForSeq2Seq
 from utils import f1_score, m2_formatter, bleu_score
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, BitsAndBytesConfig
 from transformers import Seq2SeqTrainer, Seq2SeqTrainingArguments
+from peft import prepare_model_for_kbit_training
+from peft import LoraConfig, get_peft_model, TaskType
+
+
+def print_trainable_parameters(model):
+    """
+    Prints the number of trainable parameters in the model.
+    """
+    trainable_params = 0
+    all_param = 0
+    for _, param in model.named_parameters():
+        all_param += param.numel()
+        if param.requires_grad:
+            trainable_params += param.numel()
+    print(
+        f"trainable params: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param}"
+    )
+
+
+lora_config = LoraConfig(
+    r=16, lora_alpha=32, target_modules=["q", "v"], lora_dropout=0.05, bias="none", task_type="SEQ_2_SEQ_LM"
+)
+
 
 print('load model...')
-name = 'google/flan-t5-xl'
+name = 'google/flan-t5-xxl'
 # name = 'google-t5/t5-3b'
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-model = AutoModelForSeq2SeqLM.from_pretrained(name, torch_dtype=torch.bfloat16, device_map='auto')
+model = AutoModelForSeq2SeqLM.from_pretrained(name, quantization_config=BitsAndBytesConfig(load_in_8bit=True))
 tokenizer = AutoTokenizer.from_pretrained(name)
 model.config.eos_token_id = tokenizer.eos_token_id
 model.config.pad_token_id = tokenizer.pad_token_id
 model.generation_config.max_new_tokens = 512
+
+model = prepare_model_for_kbit_training(model)
+lora_config = LoraConfig(
+    r=16, lora_alpha=32, target_modules=["q", "v"], lora_dropout=0.05, bias="none", task_type="SEQ_2_SEQ_LM"
+)
+
+
+model = get_peft_model(model, lora_config)
+print_trainable_parameters(model)
 
 def read_parallel(directory):
     src_files = sorted([f for f in os.listdir(directory) if f.endswith('.src')])
@@ -39,10 +71,6 @@ def read_parallel(directory):
     return Dataset.from_list([{'src': src, 'tgt': tgt} for src, tgt in zip(src_sentences, tgt_sentences)])
 
 def preprocess(data):
-    # punct = re.compile(' ([' + string.punctuation + ']|n\'t)')
-    # src = tokenizer('Please correct the grammar: ' + punct.sub(r'\1', data['src']))
-    # tgt = tokenizer(punct.sub(r'\1', data['tgt']))
-
     src = tokenizer('Please correct the grammar: ' + data['src'])
     tgt = tokenizer(data['tgt'])
 
@@ -98,7 +126,7 @@ val_ds = read_parallel(VAL_DIR).map(preprocess)
 val_ds.set_format(type='torch')
 
 print('start training...')
-output_dir = '/home/a/adrian/cs4248/flan-t5-xl-punct-grammar-error-correction'
+output_dir = 'flan-t5-xxl-gec'
 training_args = Seq2SeqTrainingArguments(
     output_dir=output_dir,
     eval_strategy='steps',
