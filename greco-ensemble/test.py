@@ -10,7 +10,7 @@ model.load_state_dict(torch.load('models/checkpoint.bin'))
 
 print("Model loaded")
 
-source_file = "../cs4248-group-project/data/test/ABCN.test.bea19.orig"
+source_file = "~/cs4248-group-project/data/test/ABCN.test.bea19.orig"
 hypotheses_file_1 = "t5-bea19-XXL.txt"
 hypotheses_file_2 = "t5-bea19-XL.txt"
 
@@ -37,7 +37,7 @@ n_iters = 100
 step_size = 100
 while i_iter < n_iters and lower_bound < len(source):
     upper_bound = min(lower_bound + step_size, len(source))
-    
+
     segment_source = source[lower_bound:upper_bound]
     segment_1 = hypotheses_1[lower_bound:upper_bound]
     segment_2 = hypotheses_2[lower_bound:upper_bound]
