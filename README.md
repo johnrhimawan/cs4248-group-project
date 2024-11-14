@@ -47,3 +47,7 @@ The above script will request 1 GPU for 5 hours and send you an email when the j
 3. Now just wait for the job to finish. You can check the status of your job with `squeue -u <username>` or list job accounting information `sacct`. If you need to cancel a job, you can do so with `scancel <jobid>`
 
 4. Useful note: You probably want to utilize a GPU in the SoC Compute Cluster. There are a few different partitions available: normal, gpu, long, gpu-long. For training models, you probably should use gpu-long. More information [here](https://dochub.comp.nus.edu.sg/cf/guides/compute-cluster/gpu)
+
+## Installation
+
+Run `sbatch install.sh`
