@@ -12,6 +12,8 @@
 
 ## Installation
 
+**Before starting:** make sure that `pipenv` is installed and available on `PATH`.
+
 Run `sbatch install.sh`.
 
 ## Fine-tuning
