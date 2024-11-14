@@ -8,7 +8,7 @@ from huggingface_hub import login
 import pandas as pd
 import os
 
-login(token=os.environ["HUGGINGFACE_TOKEN"])
+login(token="hf_RZeWDszGHuggRZTOtqsAzOmxzCZfxvvkHYY")
 
 # No wandb evaluation since I was lazy to setup, perhaps next time
 
