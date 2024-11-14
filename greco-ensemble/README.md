@@ -39,13 +39,15 @@ hypotheses_file_1 = "<path to the corrections of model 1>"
 hypotheses_file_2 = "<path to the corrections of model 2>"
 ```
 
-- Provide the paths to the final ensemble output file and the two score files in `test.py`:
+- Provide the paths to the final ensemble output file and the two score output files in `test.py`:
 
 ```python
 output_file = "<path to the final ensemble>"
 output_file_1 = "<path to the score of model 1's corrections>"
 output_file_2 = "<path to the score of model 2's corrections>"
 ```
+
+Each ensemble sentence appears on a single line. Each sentence in the correction file will have a corresponding score on the same line in the score output file.
 
 - Modify and run `test_script.sh`:
 

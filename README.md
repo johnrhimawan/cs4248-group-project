@@ -12,11 +12,11 @@
 
 ## Installation
 
-Run `sbatch install.sh`
+Run `sbatch install.sh`.
 
 ## Fine-tuning
 
-To fine-tune the models, see [llama](./baseline_llama/) or [T5](./baseline_t5/)
+To fine-tune the models, see [llama](./baseline_llama/) or [T5](./baseline_t5/).
 
 ## Evaluating Models
 
